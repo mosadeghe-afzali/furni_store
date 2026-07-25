@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    image: furni-store-app
+    container_name: furni-store
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - furni-network
+
+  web:
+    image: nginx:alpine
+    container_name: furni_store_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - furni-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: furni_store_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: furni_store_db
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - furni-network
+
+volumes:
+  pgdata:
+
+networks:
+  furni-network:
+    driver: bridge
