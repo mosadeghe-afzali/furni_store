@@ -14,11 +14,8 @@ class ProductService {
         $this->productRepository = $productRepostory;
     }
 
-    public function index() {
-        
+    public function index($input) {
+        return $this->productRepository->index($input);
     }
-
-
-    
 
 }

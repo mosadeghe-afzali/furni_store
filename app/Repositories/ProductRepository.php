@@ -5,7 +5,9 @@ use App\Models\Product;
 
 class ProductRepository {
     public function index($input) {
-        return Product::filter($input)->paginate(10);
+        return Product::with(['category', 'variants'])
+            ->filter($input)
+            ->paginate(10);
     }
     public function show($input) {
         return Product::filter($input)->first();
