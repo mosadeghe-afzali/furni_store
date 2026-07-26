@@ -3,35 +3,35 @@ namespace App\Repositories;
 
 use App\Http\Resources\ProductCollection;
 use App\Http\Resources\ProductResource;
-use App\Models\Product;
+use App\Models\Payment;
 
-class ProductRepository {
+class PaymentRepository {
     public function index($input) {
-        $products = Product::with(['category', 'variants'])
+        $products = Payment::with(['category', 'variants'])
             ->filter($input)
             ->paginate(10);
         return new ProductCollection($products);
     }
     public function show($input) {
-        $product = Product::with(['category', 'variants', 'variants.variantAttributeValues'])
+        $product = Payment::with(['category', 'variants', 'variants.variantAttributeValues'])
         ->first();
 
         return new ProductResource($product);
     }
 
     public function create($input) {
-        return Product::create($input);
+        return Payment::create($input);
     }
 
-    public function find($productId) {
-        return Product::find($productId);
+    public function find($paymentId) {
+        return Payment::find($paymentId);
     }
 
     public function update($input) {
 
-        $productId = $input['productId'];
-        unset($input['productId']);
+        $paymentId = $input['paymentId'];
+        unset($input['paymentId']);
 
-        Product::where('id', $productId)->update($input);
+        Payment::where('id', $paymentId)->update($input);
     }
 }
