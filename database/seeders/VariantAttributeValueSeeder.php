@@ -2,14 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\VarientAttributeValue;
+use App\Models\VariantAttributeValue;
 use Illuminate\Database\Seeder;
 
-class VarientAttributeValueSeeder extends Seeder
+
+class VariantAttributeValueSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        /*
+            /*
          * Attribute Value IDs (from AttributeValueSeeder):
          * Color:     1=Black, 2=White, 3=Brown, 4=Gray, 5=Navy Blue, 6=Beige, 7=Green, 8=Red
          * Material:  9=Solid Wood, 10=Engineered Wood, 11=Metal, 12=Fabric, 13=Leather, 14=Velvet, 15=Marble, 16=Glass
@@ -246,7 +250,7 @@ class VarientAttributeValueSeeder extends Seeder
         ];
 
         foreach ($pivotData as $item) {
-            VarientAttributeValue::create($item);
+            VariantAttributeValue::create($item);
         }
     }
 }

@@ -1,16 +1,22 @@
 <?php
 namespace App\Repositories;
 
+use App\Http\Resources\ProductCollection;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 
 class ProductRepository {
     public function index($input) {
-        return Product::with(['category', 'variants'])
+        $products = Product::with(['category', 'variants'])
             ->filter($input)
             ->paginate(10);
+        return new ProductCollection($products);
     }
     public function show($input) {
-        return Product::filter($input)->first();
+        $product = Product::with(['category', 'variants', 'variants.variantAttributeValues'])
+        ->first();
+
+        return new ProductResource($product);
     }
 
     public function create($input) {

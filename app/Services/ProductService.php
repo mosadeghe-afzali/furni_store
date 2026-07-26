@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\V1;
+namespace App\Services;
 
 use App\Repositories\ProductRepository;
 
@@ -16,6 +16,10 @@ class ProductService {
 
     public function index($input) {
         return $this->productRepository->index($input);
+    }
+
+    public function show($productId) {
+        return $this->productRepository->show($productId);
     }
 
 }

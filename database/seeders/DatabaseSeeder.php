@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\VariantAttributeValue;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -20,7 +21,7 @@ class DatabaseSeeder extends Seeder
             AttributeValueSeeder::class,
             ProductSeeder::class,
             ProductVariantSeeder::class,
-            VarientAttributeValueSeeder::class,
+            VariantAttributeValueSeeder::class,
         ]);
     }
 }

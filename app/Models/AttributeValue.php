@@ -14,8 +14,8 @@ class AttributeValue extends Model
         return $this->belongsTo(Attribute::class);
     }
 
-    public function varientAttributeValues(): HasMany
+    public function variantAttributeValues(): HasMany
     {
-        return $this->hasMany(VarientAttributeValue::class);
+        return $this->hasMany(VariantAttributeValue::class);
     }
 }

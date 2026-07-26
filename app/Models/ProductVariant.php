@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,9 +23,9 @@ class ProductVariant extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function varientAttributeValues(): HasMany
+    public function variantAttributeValues(): HasMany
     {
-        return $this->hasMany(VarientAttributeValue::class, 'variant_id');
+        return $this->hasMany(VariantAttributeValue::class, 'variant_id');
     }
 
     public function orderItems(): HasMany
