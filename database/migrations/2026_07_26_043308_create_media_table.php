@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->id();
+            $table->string('title')->nullable();
             $table->string('path');
-            $table->string('type', 50);
+            $table->integer('type')->default(1); #default image
             $table->string('alt', 150)->nullable();
             $table->tinyInteger('status')->default(0);
             $table->morphs('mediable');
+            $table->integer('sort_order')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            // $table->enum('type', ['image', 'video'])->default('image');
         });
     }
 

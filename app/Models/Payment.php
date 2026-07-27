@@ -12,8 +12,8 @@ class Payment extends Model
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
-            'status' => 'string',
+            'amount' => 'integer',
+            'status' => 'integer',
         ];
     }
 

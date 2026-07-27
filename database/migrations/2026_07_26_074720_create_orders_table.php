@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
 
-            $table->id(); 
+            $table->id();
             $table->foreignId('user_id');
             $table->bigInteger('total_amount');
-            $table->integer('status');
-            $table->string('transaction_id')->nullable();
-            $table->string('failure_reason')->nullable();
+            $table->integer('status')->default(0);
+            $table->string('description')->nullable();
             $table->dateTime('paid_at')->nullable();
             $table->timestamps();
         });
