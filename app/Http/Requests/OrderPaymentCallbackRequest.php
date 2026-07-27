@@ -25,8 +25,8 @@ class OrderPaymentCallbackRequest extends FormRequest
         return [
             'order_id' => ['required', 'integer', 'exists:orders,id'],
             'transaction_id' => ['required', 'string', 'max:100'],
+            'ref_number' => ['required', 'string', 'max:100'],
             'status' => ['required', 'string', 'in:success,failed'],
-            'failure_reason' => ['nullable', 'required_if:status,failed', 'string', 'max:255'],
         ];
     }
 }

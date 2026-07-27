@@ -3,23 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderPaymentCallbackRequest;
-use App\Services\PaymentSerice;
+use App\Services\OrderService;
 use App\Traits\ResponseTrait;
 
 class PaymentController extends Controller
 {
     use ResponseTrait;
-    protected $paymentService;
+    protected $orderService;
 
-    public function __construct(PaymentSerice $paymentService)
+    public function __construct(OrderService $orderService)
     {
-        $this->paymentService = $paymentService;
+        $this->orderService = $orderService;
     }
 
     public function callback(OrderPaymentCallbackRequest $request)
     {
         $input = $request->validated();
-        $output = $this->paymentService->callback($input);
+        $output = $this->orderService->callback($input);
         return $this->showResponse();
     }
 }

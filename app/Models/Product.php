@@ -15,6 +15,18 @@ class Product extends Model
 
     protected $fillable = ['category_id', 'name', 'slug', 'description', 'status'];
 
+    const STATUS_ACTIVE = 1;
+    const STATUS_DEACTIVE = 0;
+
+    const PRODUCT_STATUS_ENUM = [
+        self::STATUS_ACTIVE => 'active',
+        self::STATUS_DEACTIVE => 'deactive'
+    ];
+
+    const PRODUCT_STATUS_TEXTS   = [
+        self::STATUS_ACTIVE => 'فعال',
+        self::STATUS_DEACTIVE => 'غیرفعال'
+    ];
     protected function casts(): array
     {
         return [
@@ -49,15 +61,15 @@ class Product extends Model
             fn($query, $request) => $query->where('status', $request)
         );
         $query->when(
-            $request['max_price'] ?? false,
+            $request['min_price'] ?? false,
             fn($query, $minPrice) =>
-            $query->whereHas('variants', fn($v) => $v->where('price', '<=', $maxPrice))
+            $query->whereHas('variants', fn($v) => $v->where('price', '>=', $minPrice))
         );
 
         $query->when(
-            $request['min_price'] ?? false,
+            $request['max_price'] ?? false,
             fn($query, $maxPrice) =>
-            $query->whereHas('variants', fn($v) => $v->where('price', '>=', $minPrice))
+            $query->whereHas('variants', fn($v) => $v->where('price', '<=', $maxPrice))
         );
         $query->when(
             $request['name'] ?? false,

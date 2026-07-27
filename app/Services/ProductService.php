@@ -17,15 +17,15 @@ class ProductService {
         $this->productVariantRepository = $productVariantRepository;
     }
 
-    public function index($input) {
+    public function index(array $input) {
         return $this->productRepository->index($input);
     }
 
-    public function show($productId) {
+    public function show(int $productId) {
         return $this->productRepository->show($productId);
     }
 
-    public function getVariantsKeyById($variantIds) {
+    public function getVariantsKeyById(array $variantIds) {
         return $this->productVariantRepository->getVariantsKeyById($variantIds);
     }
 

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained('orders');
             $table->string('transaction_id', 100)->unique();
+            $table->string('ref_number')->nullable();
             $table->string('gateway', 50)->nullable();
             $table->unsignedBigInteger('amount');
             $table->integer('status');

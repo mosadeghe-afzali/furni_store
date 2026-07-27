@@ -19,44 +19,17 @@ class PaymentSerice
         $this->paymentRepository = $paymentRepository;
     }
 
-    public function callback($input) {
-         return DB::transaction(function () use ($input) {
+    public function findOrFail($id)
+    {
+        return $this->paymentRepository->findOrFail($id);
+    }
+    public function show($input)
+    {
+        return $this->paymentRepository->show($input);
+    }
 
-            $orderId = $input['order_id'];
-            $transactionId = $input['transaction_id'];
-            $status = $input['status'];
-            $failureReason = $input['failure_reason'] ?? null;
-
-            $order = Order::where('id', $orderId)
-                ->with('items.productVariant')
-                ->lockForUpdate()
-                ->firstOrFail();
-
-            if ($order->status !== 'pending') {
-                throw ValidationException::withMessages([
-                    'order' => "این سفارش قبلاً پردازش شده است. وضعیت فعلی: {$order->status}",
-                ]);
-            }
-
-            if ($status === 'success') {
-                $order->update([
-                    'status' => 'processing',
-                    'transaction_id' => $transactionId,
-                    'paid_at' => now(),
-                ]);
-            } else {
-                foreach ($order->items as $item) {
-                    $item->productVariant->increment('inventory', $item->quantity);
-                }
-
-                $order->update([
-                    'status' => 'cancelled',
-                    'transaction_id' => $transactionId,
-                    'failure_reason' => $failureReason ?? 'پرداخت توسط کاربر لغو شد یا ناموفق بود.',
-                ]);
-            }
-
-            return $order;
-        });
+    public function create($input)
+    {
+        return $this->paymentRepository->create($input);
     }
 }

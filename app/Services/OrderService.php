@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Payment;
+use App\OrderStatusEnum;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\OrderRepository;
@@ -12,13 +14,16 @@ class OrderService
 
     private $orderRepository;
     private $productService;
+    private $paymentService;
 
     public function __construct(
         OrderRepository $productRepostory,
-        ProductService $productService
+        ProductService $productService,
+        PaymentSerice $paymentService
     ) {
         $this->orderRepository = $productRepostory;
         $this->productService = $productService;
+        $this->paymentService = $paymentService;
     }
 
     public function submit(array $input)
@@ -66,40 +71,64 @@ class OrderService
             }
             $order = $this->orderRepository->create([
                 'user_id' => $userId,
-                'total_amount' => $totalAmount,
-                'status' => 'pending',
+                'total_amount' => $totalAmount
+            ]);
+            $transactionId = random_int(100000000, 999999999);
+
+            $this->paymentService->create([
+                'order_id' => $order->id,
+                'status' => Payment::PAYING,
+                'amount' => $totalAmount,
+                'transaction_id' => $transactionId
             ]);
 
             foreach ($orderItemsToInsert as $orderItem) {
                 $order->items()->create($orderItem);
             }
 
-            return $order->load('items');
+            return [
+                'transaction_id' => $transactionId
+            ];
         });
     }
 
-    public function callback($input) {
-         return DB::transaction(function () use ($input) {
+    public function callback($input)
+    {
+        return DB::transaction(function () use ($input) {
 
             $orderId = $input['order_id'];
             $transactionId = $input['transaction_id'];
+            $refNumber = $input['ref_number'];
             $status = $input['status'];
-            $failureReason = $input['failure_reason'] ?? null;
 
-            $order = Order::where('id', $orderId)
-                ->with('items.productVariant')
-                ->lockForUpdate()
-                ->firstOrFail();
+            $payment = $this->paymentService->show([
+                'id' => $input['order_id'],
+                'transaction_idd' => $transactionId,
+                'status' => Payment::PAYING
+            ]);
 
-            if ($order->status !== 'pending') {
-                throw new \Exception("این سفارش قبلاً پردازش شده است. وضعیت فعلی: {$order->status}");
+            if (!$payment) {
+                throw ValidationException::withMessages([
+                    'payment' => 'این پرداخت قبلاً پردازش شده است'
+                ]);
+            }
+
+            $order = $payment->order;
+
+            if ($order->status != OrderStatusEnum::PAYING->value) {
+                throw ValidationException::withMessages([
+                    'order' => "این سفارش قبلاً پردازش شده است. وضعیت فعلی: {$order->status}",
+                ]);
             }
 
             if ($status === 'success') {
                 $order->update([
-                    'status' => 'processing',
-                    'transaction_id' => $transactionId,
+                    'status' => OrderStatusEnum::SUCCESSUL->value,
                     'paid_at' => now(),
+                ]);
+                $payment->update([
+                    'status' => Payment::SUCCESSUL,
+                    'ref_number' => $refNumber
                 ]);
             } else {
                 foreach ($order->items as $item) {
@@ -107,9 +136,10 @@ class OrderService
                 }
 
                 $order->update([
-                    'status' => 'cancelled',
-                    'transaction_id' => $transactionId,
-                    'failure_reason' => $failureReason ?? 'پرداخت توسط کاربر لغو شد یا ناموفق بود.',
+                    'status' => OrderStatusEnum::CANCELD->value
+                ]);
+                $payment->update([
+                    'status' => Payment::CANCELD
                 ]);
             }
 

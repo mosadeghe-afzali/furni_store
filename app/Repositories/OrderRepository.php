@@ -33,6 +33,10 @@ class OrderRepository
         return Order::find($orderId);
     }
 
+    public function findOrFail($orderId)
+    {
+        return Order::findOrFail($orderId);
+    }
     public function update($input)
     {
 

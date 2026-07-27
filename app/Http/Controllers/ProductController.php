@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ProductService;
-use Illuminate\Http\JsonResponse;
-use App\Http\Requests\ProductIndexRequest;
 use App\Traits\ResponseTrait;
-
+use App\Services\ProductService;
+use App\Http\Requests\ProductIndexRequest;
 class ProductController extends Controller
 {
     use ResponseTrait;

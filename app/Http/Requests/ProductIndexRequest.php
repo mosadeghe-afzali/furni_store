@@ -30,6 +30,8 @@ class ProductIndexRequest extends FormRequest
             'has_inventory' => 'nullable|in:0,1',
             'color' => 'string|exists:attribute_values,value',
             'order_by' => 'nullable|string|in:price_asc,price_desc,created_at_asc,created_at_desc',
+            'page' => 'sometimes|integer|min:1',
+            'per_page' => 'sometimes|integer|min:1|max:100',
         ];
     }
 }
