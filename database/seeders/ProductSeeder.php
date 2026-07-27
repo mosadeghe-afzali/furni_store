@@ -10,96 +10,57 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $products = [
-            // Living Room - Sofas (category_id: 6)
+            // اتاق نشیمن - مبل (category_id: 3)
             [
-                'category_id' => 6,
-                'name' => 'Modern L-Shape Sofa',
+                'category_id' => 3,
+                'name' => 'مبل ال شکل مدرن',
                 'slug' => 'modern-l-shape-sofa',
-                'description' => 'Spacious L-shaped sofa with premium fabric upholstery and solid wood frame.',
+                'description' => 'مبل ال شکل بزرگ با روکش پارچه مرغوب و فریم چوبی محکم.',
+                'status' => 1,
+            ],
+            [
+                'category_id' => 3,
+                'name' => 'مبل کلاسیک چستر',
+                'slug' => 'classic-chevronfield-sofa',
+                'description' => 'مبل شیک با طراحی دکمه‌ای عمیق و دسته‌های گرد.',
+                'status' => 1,
+            ],
+            // اتاق نشیمن - میز جلو مبلی (category_id: 4)
+            [
+                'category_id' => 4,
+                'name' => 'میز جلو مبلی سنگ مرمر',
+                'slug' => 'marble-top-coffee-table',
+                'description' => 'میز جلو مبلی لوکس با روکش سنگ مرمر طبیعی و پایه‌های طلایی.',
+                'status' => 1,
+            ],
+            [
+                'category_id' => 4,
+                'name' => 'میز جلو مبلی چوبی',
+                'slug' => 'rustic-wooden-coffee-table',
+                'description' => 'میز جلو مبلی از چوب راش با روکش طبیعی.',
+                'status' => 1,
+            ],
+            // اتاق خواب - تخت خواب (category_id: 6)
+            [
+                'category_id' => 6,
+                'name' => 'تخت خواب کوئین مینیمال',
+                'slug' => 'platform-bed-queen',
+                'description' => 'تخت خواب مینیمال با تخته سر تخت یکپارچه و فضای ذخیره‌سازی زیر تخت.',
                 'status' => 1,
             ],
             [
                 'category_id' => 6,
-                'name' => 'Classic Chesterfield Sofa',
-                'slug' => 'classic-chevronfield-sofa',
-                'description' => 'Elegant Chesterfield sofa with deep button tufting and rolled arms.',
-                'status' => 1,
-            ],
-            // Living Room - Coffee Tables (category_id: 7)
-            [
-                'category_id' => 7,
-                'name' => 'Marble Top Coffee Table',
-                'slug' => 'marble-top-coffee-table',
-                'description' => 'Luxurious coffee table with genuine marble top and gold metal legs.',
-                'status' => 1,
-            ],
-            [
-                'category_id' => 7,
-                'name' => 'Rustic Wooden Coffee Table',
-                'slug' => 'rustic-wooden-coffee-table',
-                'description' => 'Solid acacia wood coffee table with natural grain finish.',
-                'status' => 1,
-            ],
-            // Bedroom - Beds (category_id: 9)
-            [
-                'category_id' => 9,
-                'name' => 'Platform Bed Queen',
-                'slug' => 'platform-bed-queen',
-                'description' => 'Minimalist platform bed with built-in headboard and under-bed storage.',
-                'status' => 1,
-            ],
-            [
-                'category_id' => 9,
-                'name' => 'Upholstered King Bed',
+                'name' => 'تخت خواب کینگ روکش‌دار',
                 'slug' => 'upholstered-king-bed',
-                'description' => 'Luxurious king bed with velvet upholstered frame and tufted headboard.',
+                'description' => 'تخت خواب لوکس با فریم مخملی و تخته سر تخت دکمه‌ای.',
                 'status' => 1,
             ],
-            // Bedroom - Nightstands (category_id: 11)
+            // اتاق خواب - کمد لباس (category_id: 7)
             [
-                'category_id' => 11,
-                'name' => '2-Drawer Nightstand',
-                'slug' => '2-drawer-nightstand',
-                'description' => 'Compact nightstand with two soft-close drawers and open shelf.',
-                'status' => 1,
-            ],
-            // Office - Desks (category_id: 12)
-            [
-                'category_id' => 12,
-                'name' => 'Standing Desk Electric',
-                'slug' => 'standing-desk-electric',
-                'description' => 'Height-adjustable electric standing desk with memory presets.',
-                'status' => 1,
-            ],
-            [
-                'category_id' => 12,
-                'name' => 'Executive Office Desk',
-                'slug' => 'executive-office-desk',
-                'description' => 'Spacious executive desk with built-in cable management and drawers.',
-                'status' => 1,
-            ],
-            // Office - Office Chairs (category_id: 13)
-            [
-                'category_id' => 13,
-                'name' => 'Ergonomic Mesh Chair',
-                'slug' => 'ergonomic-mesh-chair',
-                'description' => 'Fully adjustable ergonomic chair with lumbar support and mesh back.',
-                'status' => 1,
-            ],
-            // Dining - Dining Tables (category_id: 16)
-            [
-                'category_id' => 16,
-                'name' => 'Extendable Dining Table',
-                'slug' => 'extendable-dining-table',
-                'description' => 'Solid oak dining table that extends from 6 to 10 seats.',
-                'status' => 1,
-            ],
-            // Dining - Dining Chairs (category_id => 17)
-            [
-                'category_id' => 17,
-                'name' => 'Leather Dining Chair',
-                'slug' => 'leather-dining-chair',
-                'description' => 'Modern dining chair with genuine leather seat and metal legs.',
+                'category_id' => 7,
+                'name' => 'کمد لباس دو کشو',
+                'slug' => '2-drawer-wardrobe',
+                'description' => 'کمد لباس کمپکت با دو کشو آرام‌بند و قفسه باز.',
                 'status' => 1,
             ],
         ];

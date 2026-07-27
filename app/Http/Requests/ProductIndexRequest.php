@@ -23,13 +23,12 @@ class ProductIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => 'nullable|integer|exists:categories,id',
+            'category' => 'nullable|string|exists:categories,slug',
             'status' => 'nullable|integer',
             'min_price' => 'nullable|integer|min:0',
             'max_price' => 'nullable|integer|min:0',
-            'in_stock' => 'nullable|in:0,1',
-            'attribute_values' => 'nullable|array',
-            'attribute_values.*' => 'integer|exists:attribute_values,id',
+            'has_inventory' => 'nullable|in:0,1',
+            'color' => 'string|exists:attribute_values,value',
             'order_by' => 'nullable|string|in:price_asc,price_desc,created_at_asc,created_at_desc',
         ];
     }

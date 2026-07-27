@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -31,11 +32,16 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
+    public function media(): MorphMany
+    {
+        return $this->morphMany(Media::class, 'mediable');
+    }
+
     public function scopeFilter($query, array $request)
     {
         $query->when(
-            $request['category_id'] ?? false,
-            fn($query, $request) => $query->where('category_id', $request)
+            $request['category'] ?? false,
+            fn($query, $slug) => $query->whereHas('category', fn($q) => $q->where('slug', $slug))
         );
 
         $query->when(
@@ -45,36 +51,35 @@ class Product extends Model
         $query->when(
             $request['max_price'] ?? false,
             fn($query, $minPrice) =>
-            $query->whereHas('variants', fn($v) => $v->where('price', '>=', $minPrice))
+            $query->whereHas('variants', fn($v) => $v->where('price', '<=', $minPrice))
         );
 
         $query->when(
             $request['min_price'] ?? false,
-            fn($query, $minPrice) =>
-            $query->whereHas('variants', fn($v) => $v->where('price', '<=', $maxPrice))
+            fn($query, $maxPrice) =>
+            $query->whereHas('variants', fn($v) => $v->where('price', '>=', $maxPrice))
         );
         $query->when(
             $request['name'] ?? false,
             fn($query, $request) => $query->where('name', 'like', "%{$request}%")
         );
 
+        $query->when(array_key_exists('has_inventory', $request), function ($q) use ($request) {
+            if ($request['has_inventory'] == 1) {
+                $q->whereHas('variants', fn($v) => $v->where('inventory', '>', 0));
+            } else {
+                $q->whereDoesntHave('variants', fn($v) => $v->where('inventory', '>', 0));
+            }
+        });
+
         $query->when(
-            $request['with_inventory'] ?? false,
-            fn($query) =>
-            $query->whereHas('variants', fn($v) => $v->where('inventory', '>', 0))
+            $request['color'] ?? false,
+            fn($query, $color) =>
+            $query->whereHas('variants.variantAttributeValues.attributeValue', function ($q) use ($color) {
+                $q->where('attribute_id', 1)->where('value', $color);
+            })
         );
-        $query->when(
-            $request['with_inventory'] ?? false,
-            fn($q, $attributeValues) =>
-            collect($attributeValues)->each(
-                fn($valueId) =>
-                $q->whereHas(
-                    'variants.variantAttributeValues',
-                    fn($vav) =>
-                    $vav->where('attribute_value_id', $valueId)
-                )
-            )
-        );
+
         $query->when($request['order_by'] ?? null, function ($q, $orderBy) use ($request) {
             $direction = match (true) {
                 str_ends_with($orderBy, '_asc') => 'asc',

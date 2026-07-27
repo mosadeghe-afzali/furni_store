@@ -8,6 +8,7 @@ use App\Models\Product;
 class ProductRepository {
     public function index($input) {
         $products = Product::with(['category', 'variants'])
+            ->where('status', 1)
             ->filter($input)
             ->paginate(10);
         return new ProductCollection($products);
