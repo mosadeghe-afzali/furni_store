@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->bigInteger('unit_price');
             $table->bigInteger('total_price');
+            $table->timestamps();
         });
     }
 

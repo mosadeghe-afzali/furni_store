@@ -61,7 +61,7 @@ class ProductSeeder extends Seeder
                 'name' => 'کمد لباس دو کشو',
                 'slug' => '2-drawer-wardrobe',
                 'description' => 'کمد لباس کمپکت با دو کشو آرام‌بند و قفسه باز.',
-                'status' => 1,
+                'status' => 0,
             ],
         ];
 

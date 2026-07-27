@@ -17,7 +17,9 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->bigInteger('total_amount');
             $table->integer('status');
-            $table->dateTime('pay_at')->nullable();
+            $table->string('transaction_id')->nullable();
+            $table->string('failure_reason')->nullable();
+            $table->dateTime('paid_at')->nullable();
             $table->timestamps();
         });
     }

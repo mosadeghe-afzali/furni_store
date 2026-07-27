@@ -9,44 +9,44 @@ class AttributeValueSeeder extends Seeder
 {
     public function run(): void
     {
-        // Color (attribute_id: 1)
-        $colors = ['Black', 'White', 'Brown', 'Gray', 'Navy Blue', 'Beige', 'Green', 'Red'];
+        // رنگ (attribute_id: 1)
+        $colors = ['مشکی', 'سفید', 'قهوه‌ای', 'خاکستری', 'سرمه‌ای', 'بژ', 'سبز', 'قرمز'];
         foreach ($colors as $color) {
             AttributeValue::create(['attribute_id' => 1, 'value' => $color]);
         }
 
-        // Material (attribute_id: 2)
-        $materials = ['Solid Wood', 'Engineered Wood', 'Metal', 'Fabric', 'Leather', 'Velvet', 'Marble', 'Glass'];
+        // جنس (attribute_id: 2)
+        $materials = ['چوب طبیعی', 'چوب مصنوعی', 'فلز', 'پارچه', 'چرم', 'مخمل', 'سنگ مرمر', 'شیشه'];
         foreach ($materials as $material) {
             AttributeValue::create(['attribute_id' => 2, 'value' => $material]);
         }
 
-        // Size (attribute_id: 3)
-        $sizes = ['Small', 'Medium', 'Large', 'Extra Large'];
+        // اندازه (attribute_id: 3)
+        $sizes = ['کوچک', 'متوسط', 'بزرگ', 'خیلی بزرگ'];
         foreach ($sizes as $size) {
             AttributeValue::create(['attribute_id' => 3, 'value' => $size]);
         }
 
-        // Weight (attribute_id: 4)
-        $weights = ['5', '10', '15', '20', '30', '50'];
+        // وزن (attribute_id: 4)
+        $weights = ['۵', '۱۰', '۱۵', '۲۰', '۳۰', '۵۰'];
         foreach ($weights as $weight) {
             AttributeValue::create(['attribute_id' => 4, 'value' => $weight]);
         }
 
-        // Width (attribute_id: 5)
-        $widths = ['60', '80', '100', '120', '150', '180', '200'];
+        // عرض (attribute_id: 5)
+        $widths = ['۶۰', '۸۰', '۱۰۰', '۱۲۰', '۱۵۰', '۱۸۰', '۲۰۰'];
         foreach ($widths as $width) {
             AttributeValue::create(['attribute_id' => 5, 'value' => $width]);
         }
 
-        // Height (attribute_id: 6)
-        $heights = ['40', '50', '60', '75', '85', '100', '120'];
+        // ارتفاع (attribute_id: 6)
+        $heights = ['۴۰', '۵۰', '۶۰', '۷۵', '۸۵', '۱۰۰', '۱۲۰'];
         foreach ($heights as $height) {
             AttributeValue::create(['attribute_id' => 6, 'value' => $height]);
         }
 
-        // Depth (attribute_id: 7)
-        $depths = ['30', '40', '50', '60', '70', '80', '90'];
+        // عمق (attribute_id: 7)
+        $depths = ['۳۰', '۴۰', '۵۰', '۶۰', '۷۰', '۸۰', '۹۰'];
         foreach ($depths as $depth) {
             AttributeValue::create(['attribute_id' => 7, 'value' => $depth]);
         }
