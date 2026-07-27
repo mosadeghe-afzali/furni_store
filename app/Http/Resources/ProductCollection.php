@@ -9,16 +9,28 @@ class ProductCollection extends ResourceCollection
 {
     public function toArray(Request $request)
     {
-        $result =  $this->collection->map(function ($item) {
-            $data = [
+        $result = $this->collection->map(function ($item) {
+            $variants = $item->variants ?? collect();
+
+            $colors = $variants->flatMap(fn($v) => $v->attributeValues ?? collect())
+                ->where('attribute_id', 1)
+                ->pluck('value')
+                ->unique()
+                ->implode('،');
+
+            return [
                 'id' => $item->id,
                 'category_id' => $item->category_id,
+                'category_slug' => $item->category->slug ?? null,
                 'name' => $item->name,
                 'slug' => $item->slug,
                 'description' => $item->description,
+                'min_price' => $variants->min('price'),
+                'max_price' => $variants->max('price'),
+                'has_inventory' => $variants->contains('inventory', '>', 0),
+                'colors' => $colors,
+                'created_at' => $item->created_at,
             ];
-
-            return $data;
         });
         return [
             'data' => $result,
