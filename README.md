@@ -53,6 +53,84 @@ In order to ensure that the Laravel community is welcoming to all, please review
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
+## Docker Setup
+
+### Prerequisites
+
+- Docker and Docker Compose installed
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone <repository-url>
+cd furni-store
+```
+
+2. Start the containers:
+
+```bash
+docker compose up -d
+```
+
+3. Install dependencies:
+
+```bash
+docker compose exec app composer install
+```
+
+4. Generate application key:
+
+```bash
+docker compose exec app php artisan key:generate
+```
+
+5. Update `.env` file, change `DB_HOST` to `postgres`:
+
+```
+DB_HOST=postgres
+```
+
+6. Run migrations:
+
+```bash
+docker compose exec app php artisan migrate
+```
+
+7. Seed the database:
+
+```bash
+docker compose exec app php artisan db:seed
+```
+
+### Services
+
+| Service | Container | URL / Port |
+|---------|-----------|------------|
+| Nginx | furni_store_nginx | http://localhost:8000 |
+| PHP-FPM | furni-store | :9000 |
+| PostgreSQL | furni_store_postgres | :5432 |
+
+### Useful Commands
+
+```bash
+# Run tests
+docker compose exec app php artisan test
+
+# Access Laravel shell
+docker compose exec app php artisan tinker
+
+# View logs
+docker compose logs -f
+
+# Stop containers
+docker compose down
+
+# Stop and remove volumes (fresh start)
+docker compose down -v
+```
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
