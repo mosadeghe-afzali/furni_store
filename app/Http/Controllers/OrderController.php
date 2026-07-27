@@ -19,8 +19,8 @@ class OrderController extends Controller
     {
 
         $input = $request->validated();
-        $input['userId'] =
-            $output = $this->orderService->submit($input);
+        $input['userId'] = $request->user()->id ?? 1;
+        $output = $this->orderService->submit($input);
 
         return $this->showResponse($output);
     }

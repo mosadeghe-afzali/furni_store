@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
     protected $fillable = ['category_id', 'name', 'slug', 'description', 'status'];
 
@@ -51,13 +51,13 @@ class Product extends Model
         $query->when(
             $request['max_price'] ?? false,
             fn($query, $minPrice) =>
-            $query->whereHas('variants', fn($v) => $v->where('price', '<=', $minPrice))
+            $query->whereHas('variants', fn($v) => $v->where('price', '<=', $maxPrice))
         );
 
         $query->when(
             $request['min_price'] ?? false,
             fn($query, $maxPrice) =>
-            $query->whereHas('variants', fn($v) => $v->where('price', '>=', $maxPrice))
+            $query->whereHas('variants', fn($v) => $v->where('price', '>=', $minPrice))
         );
         $query->when(
             $request['name'] ?? false,

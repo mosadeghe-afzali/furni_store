@@ -22,29 +22,31 @@ class PaymentSerice
     public function callback($input) {
          return DB::transaction(function () use ($input) {
 
-            $orderId = $input['orderId'];
-            $transactionId = $input['transactionId'];
+            $orderId = $input['order_id'];
+            $transactionId = $input['transaction_id'];
             $status = $input['status'];
-            $failureReason = $input['failureReason'];
+            $failureReason = $input['failure_reason'] ?? null;
 
             $order = Order::where('id', $orderId)
-                ->with('items.variant')
+                ->with('items.productVariant')
                 ->lockForUpdate()
                 ->firstOrFail();
 
             if ($order->status !== 'pending') {
-                throw new ValidationException("این سفارش قبلاً پردازش شده است. وضعیت فعلی: {$order->status}");
+                throw ValidationException::withMessages([
+                    'order' => "این سفارش قبلاً پردازش شده است. وضعیت فعلی: {$order->status}",
+                ]);
             }
 
             if ($status === 'success') {
                 $order->update([
-                    'status' => 'processing', // یا completed
+                    'status' => 'processing',
                     'transaction_id' => $transactionId,
                     'paid_at' => now(),
                 ]);
             } else {
                 foreach ($order->items as $item) {
-                    $item->variant->increment('stock', $item->quantity);
+                    $item->productVariant->increment('inventory', $item->quantity);
                 }
 
                 $order->update([

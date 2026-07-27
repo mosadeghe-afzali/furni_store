@@ -7,14 +7,15 @@ use App\Models\Product;
 
 class ProductRepository {
     public function index($input) {
-        $products = Product::with(['category', 'variants'])
+        $products = Product::with(['category', 'variants.attributeValues'])
             ->where('status', 1)
             ->filter($input)
             ->paginate(10);
         return new ProductCollection($products);
     }
-    public function show($input) {
-        $product = Product::with(['category', 'variants', 'variants.variantAttributeValues'])
+    public function show($productId) {
+        $product = Product::with(['category', 'variants.attributeValues.attribute', 'variants.media'])
+        ->where('id', $productId)
         ->first();
 
         return new ProductResource($product);

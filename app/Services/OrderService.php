@@ -21,7 +21,7 @@ class OrderService
         $this->productService = $productService;
     }
 
-    public function store(array $input)
+    public function submit(array $input)
     {
         return DB::transaction(function () use ($input) {
             $totalAmount = 0;
@@ -38,13 +38,17 @@ class OrderService
                 $quantity = $item['quantity'];
 
                 if (!isset($variants[$variantId])) {
-                    throw new ValidationException("تنوع محصول با شناسه {$variantId} یافت نشد یا غیرفعال است.");
+                    throw ValidationException::withMessages([
+                        'items' => "تنوع محصول با شناسه {$variantId} یافت نشد یا غیرفعال است.",
+                    ]);
                 }
 
                 $variant = $variants[$variantId];
 
                 if ($variant->inventory < $quantity) {
-                    throw new ValidationException("موجودی کافی برای محصول '{$variant->title}' وجود ندارد. موجودی فعلی: {$variant->stock}");
+                    throw ValidationException::withMessages([
+                        'items' => "موجودی کافی برای محصول '{$variant->title}' وجود ندارد. موجودی فعلی: {$variant->inventory}",
+                    ]);
                 }
 
                 $unitPrice = $variant->price;
@@ -54,7 +58,7 @@ class OrderService
                 $variant->decrement('inventory', $quantity);
 
                 $orderItemsToInsert[] = [
-                    'variant_id' => $variant->id,
+                    'product_variant_id' => $variant->id,
                     'quantity' => $quantity,
                     'unit_price' => $unitPrice,
                     'total_price' => $itemTotalPrice,
@@ -74,35 +78,32 @@ class OrderService
         });
     }
 
-    pubclic function callback($input) {
+    public function callback($input) {
          return DB::transaction(function () use ($input) {
 
-            $orderId = $input['orderId'];
-            $transactionId = $input['transactionId'];
+            $orderId = $input['order_id'];
+            $transactionId = $input['transaction_id'];
             $status = $input['status'];
-            $failureReason = $input['failureReason'];
+            $failureReason = $input['failure_reason'] ?? null;
 
             $order = Order::where('id', $orderId)
-                ->with('items.variant')
+                ->with('items.productVariant')
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            // ۱. بررسی Idempotency: اگر سفارش قبلاً تعیین تکلیف شده است
             if ($order->status !== 'pending') {
-                throw new Exception("این سفارش قبلاً پردازش شده است. وضعیت فعلی: {$order->status}");
+                throw new \Exception("این سفارش قبلاً پردازش شده است. وضعیت فعلی: {$order->status}");
             }
 
             if ($status === 'success') {
-                // ۲. پرداخت موفق
                 $order->update([
-                    'status' => 'processing', // یا completed
+                    'status' => 'processing',
                     'transaction_id' => $transactionId,
                     'paid_at' => now(),
                 ]);
             } else {
-                // ۳. پرداخت ناموفق -> برگشت موجودی انبار (Restock)
                 foreach ($order->items as $item) {
-                    $item->variant->increment('stock', $item->quantity);
+                    $item->productVariant->increment('inventory', $item->quantity);
                 }
 
                 $order->update([

@@ -42,9 +42,9 @@ class productVariantRepository
         ProductVariant::where('id', $productId)->update($input);
     }
 
-    public function getVariantsKeyById()
+    public function getVariantsKeyById($variantIds)
     {
-        ProductVariant::whereIn('id', $variantIds)
+        return ProductVariant::whereIn('id', $variantIds)
             ->where('status', 1)
             ->get()
             ->keyBy('id');
