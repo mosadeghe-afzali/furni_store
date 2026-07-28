@@ -56,12 +56,7 @@ class OrderSubmitTest extends TestCase
                 'success',
                 'message',
                 'response' => [
-                    'id',
-                    'user_id',
-                    'total_amount',
-                    'items' => [
-                        '*' => ['id', 'product_variant_id', 'quantity', 'unit_price', 'total_price'],
-                    ],
+                    'transaction_id'
                 ],
             ]);
 

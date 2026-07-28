@@ -113,6 +113,12 @@ class OrderService
                 ]);
             }
 
+            if ($payment->created_at->diffInMinutes(now()) > 20) {
+                throw ValidationException::withMessages([
+                    'payment' => 'زمان پرداخت بیش از ۲۰ دقیقه قبل بوده است. لطفاً مجدداً تلاش کنید.'
+                ]);
+            }
+
             $order = $payment->order;
 
             if ($order->status != OrderStatusEnum::PAYING->value) {

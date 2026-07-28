@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
@@ -41,7 +42,7 @@ class PaymentCallbackTest extends TestCase
         $this->order = Order::create([
             'user_id' => 1,
             'total_amount' => 200000,
-            'status' => 'pending',
+            'status' => 0,
         ]);
 
         OrderItem::create([
@@ -50,6 +51,13 @@ class PaymentCallbackTest extends TestCase
             'quantity' => $quantity,
             'unit_price' => 100000,
             'total_price' => 200000,
+        ]);
+
+        Payment::create([
+            'order_id' => $this->order->id,
+            'transaction_id' => 'TXN-12345',
+            'amount' => 200000,
+            'status' => Payment::PAYING,
         ]);
 
         $this->variant->decrement('inventory', $quantity);
@@ -62,6 +70,7 @@ class PaymentCallbackTest extends TestCase
         $response = $this->postJson('/api/v1/orders/payments/callback', [
             'order_id' => $this->order->id,
             'transaction_id' => 'TXN-12345',
+            'ref_number' => 'REF-999',
             'status' => 'success',
         ]);
 
@@ -73,8 +82,13 @@ class PaymentCallbackTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'id' => $this->order->id,
-            'status' => 'processing',
-            'transaction_id' => 'TXN-12345',
+            'status' => 1,
+        ]);
+
+        $this->assertDatabaseHas('payments', [
+            'order_id' => $this->order->id,
+            'status' => Payment::SUCCESSUL,
+            'ref_number' => 'REF-999',
         ]);
 
         $this->assertDatabaseHas('product_variants', [
@@ -89,9 +103,9 @@ class PaymentCallbackTest extends TestCase
 
         $response = $this->postJson('/api/v1/orders/payments/callback', [
             'order_id' => $this->order->id,
-            'transaction_id' => 'TXN-67890',
+            'transaction_id' => 'TXN-12345',
+            'ref_number' => 'REF-999',
             'status' => 'failed',
-            'failure_reason' => 'Insufficient funds',
         ]);
 
         $response->assertStatus(200)
@@ -102,9 +116,12 @@ class PaymentCallbackTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'id' => $this->order->id,
-            'status' => 'cancelled',
-            'transaction_id' => 'TXN-67890',
-            'failure_reason' => 'Insufficient funds',
+            'status' => -2,
+        ]);
+
+        $this->assertDatabaseHas('payments', [
+            'order_id' => $this->order->id,
+            'status' => Payment::CANCELD,
         ]);
 
         $this->assertDatabaseHas('product_variants', [
