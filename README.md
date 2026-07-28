@@ -1,6 +1,6 @@
 # فروشگاه مبلمان - Furni Store
 
-یک API رست برای مدیریت محصولات، سفارشات و پرداخت‌های یک فروشگاه آنلاین مبلمان، ساخته شده با Laravel و PostgreSQL.
+پروژه  برای مدیریت محصولات، سفارشات و پرداخت‌های یک فروشگاه آنلاین مبلمان، ساخته شده با Laravel و PostgreSQL.
 
 
 
@@ -39,8 +39,37 @@ docker compose exec app composer install
 ```bash
 docker compose exec app php artisan key:generate
 ```
+## رش اجرای Migration‌ها
 
-۶. Migration‌ها و Seed داده‌ها را اجرا کنید (در بخش‌های بعدی توضیح داده شده).
+برای ایجاد ساختار دیتابیس، دستور زیر را اجرا کنید:
+
+```bash
+docker compose exec app php artisan migrate
+
+
+## روش ایجاد داده نمونه
+برای پر کردن دیتابیس با داده‌های نمونه، از سیدرها استفاده می‌شود:
+
+```bash
+docker compose exec app php artisan db:seed
+
+برای اجرای مجدد از ابتدا:
+
+```bash
+docker compose exec app php artisan migrate:fresh --seed
+
+## روش اجرای تست‌ها
+
+```bash
+docker compose exec app php artisan test
+
+
+## روش اجرای تست‌ها
+
+```bash
+docker compose exec app php artisan test
+```
+
 
 ### سرویس‌ها
 
@@ -58,100 +87,6 @@ docker compose exec app php artisan serve
 
 # دسترسی به شل Laravel
 docker compose exec app php artisan tinker
-
----
-
-## رش اجرای Migration‌ها
-
-برای ایجاد ساختار دیتابیس، دستور زیر را اجرا کنید:
-
-```bash
-docker compose exec app php artisan migrate
-```
-
-اگر می‌خواهید مایگریشن‌ها را از اول اجرا کنید (مثلاً در محیط توسعه):
-
-```bash
-docker compose exec app php artisan migrate:fresh
-```
-
-فایل‌های مایگریشن شامل جداول زیر هستند:
-
-| جدول | توضیح |
-|------|-------|
-| `users` | کاربران سیستم |
-| `categories` | دسته‌بندی محصولات (ساختار درختی) |
-| `products` | محصولات |
-| `product_variants` | تنوع هر محصول (رنگ، سایز، جنس و...) |
-| `attributes` | ویژگی‌های قابل انتخاب (رنگ، جنس، سایز و...) |
-| `attribute_values` | مقادیر هر ویژگی |
-| `variant_attribute_values` | اتصال تنوع محصول به مقادیر ویژگی‌ها |
-| `media` | رسانه‌های محصولات و تنوع‌ها (polymorphic) |
-| `orders` | سفارشات |
-| `order_items` | آیتم‌های هر سفارش |
-| `payments` | اطلاعات پرداخت |
-| `cache` | کش برنامه |
-| `jobs` | کارهای صف |
-| `personal_access_tokens` | توکن‌های احراز هویت (Sanctum) |
-
----
-
-## روش ایجاد داده نمونه
-
-برای پر کردن دیتابیس با داده‌های نمونه، از سیدرها استفاده می‌شود:
-
-```bash
-docker compose exec app php artisan db:seed
-```
-
-سیدر `DatabaseSeeder` به ترتیب زیر اجرا می‌شود:
-
-| سیدر | محتوا |
-|------|-------|
-| `CategorySeeder` | ۲ دسته‌بندی اصلی (نشیمن، خواب) با ۵ زیردسته |
-| `AttributeSeeder` | ۷ ویژگی (رنگ، جنس، سایز، وزن، عرض، ارتفاع، عمق) |
-| `AttributeValueSeeder` | ۴۷ مقدار برای ویژگی‌ها |
-| `ProductSeeder` | ۷ محصول مبلمان |
-| `ProductVariantSeeder` | ۱۰ تنوع برای محصولات |
-| `VariantAttributeValueSeeder` | اتصال هر تنوع به ۷ مقدار ویژگی |
-| `MediaSeeder` | ۳۱ رسانه (تصویر) برای محصولات و تنوع‌ها |
-
-برای اجرای مجدد از ابتدا:
-
-```bash
-docker compose exec app php artisan migrate:fresh --seed
-```
-
----
-
-## روش اجرای تست‌ها
-
-```bash
-docker compose exec app php artisan test
-```
-
-تست‌ها روی یک دیتابیس جداگانه (`furni_store_test`) اجرا می‌شوند و هیچ تغییری در دیتابیس اصلی ایجاد نمی‌کنند.
-
-### فایل‌های تست
-
-| فایل | تعداد تست | توضیح |
-|------|-----------|-------|
-| `ProductIndexTest.php` | ۸ | لیست محصولات، فیلتر بر اساس قیمت، موجودی، دسته‌بندی و رنگ |
-| `ProductShowTest.php` | ۹ | نمایش جزئیات محصول، تنوع‌ها، ویژگی‌ها و رسانه‌ها |
-| `OrderSubmitTest.php` | - | ثبت سفارش و کسر موجودی |
-| `PaymentCallbackTest.php` | ۲ | پرداخت موفق و ناموفق، برگرداندن موجودی |
-| `ExampleTest.php` | ۱ | تست پیش‌فرض Laravel |
-
-### اجرای تست خاص
-
-```bash
-# اجرای یک فایل تست مشخص
-docker compose exec app php artisan test --filter=ProductIndexTest
-
-# اجرای یک متد تست مشخص
-docker compose exec app php artisan test --filter=ProductIndexTest::test_filter_by_min_price
-```
-
 ---
 
 ## ساختار کلی پروژه
@@ -243,18 +178,6 @@ User ──1:N──> Order
 
 هر سفارش شامل یک یا چند آیتم است و وضعیت‌های مختلفی دارد (در حال پرداخت، موفق، لغو شده). پرداخت‌ها با شماره تراکنش و مرجع ردیابی می‌شوند و مهلت ۲۰ دقیقه‌ای برای تکمیل دارند.
 
----
-
-## دلیل انتخاب زبان و فریم‌ورک
-
-### PHP 8.3 و Laravel 11
-
-- **Laravel** محبوب‌ترین فریم‌ورک PHP است و اکوسیستم بسیار غنی‌ای دارد. ابزارهای داخلی آن (Eloquent ORM, migrations, validation, testing) بخش زیادی از نیازهای پروژه را بدون نیاز به پکیج‌های جانبی پوشش می‌دهند.
-- **PHP 8.3** با قابلیت‌های جدیدی مثل Typed Properties, Enums و Fibers پشتیبانی بهتری از کد تمیز و خوانا فراهم می‌کند.
-- سرعت توسعه با Laravel بالاست و برای پروژه‌هایی با محدودیت زمانی انتخاب مناسبی است.
-- **PostgreSQL** به عنوان دیتابیس انتخاب شده چون پشتیبانی بهتری از JSON, full-text search و عملیات پیچیده دارد و برای مقیاس بزرگ‌تر آماده‌تر است.
-
----
 
 ## فرضیات انجام شده
 
@@ -302,8 +225,4 @@ User ──1:N──> Order
 - **Rate Limiting**: اعمال محدودیت تعداد درخواست روی اندپوینت‌ها
 - **Logging و Monitoring**: استفاده از ابزارهایی مثل Laravel Telescope یا Sentry برای مانیتورینگ
 
-### دیتابیس
 
-- **اندکس‌گذاری**: اضافه کردن اندکس به فیلدهای پرجستجو مانند `slug`, `status`, `price`
-- **Read Replicas**: استفاده از دیتابیس‌های Slave برای عملیات خواندن
-- **Database Partitioning**: تقسیم جداول بزرگ مانند `orders` بر اساس تاریخ
