@@ -94,12 +94,14 @@ class ProductIndexTest extends TestCase
         $response = $this->getJson('/api/v1/products');
 
         $response->assertStatus(200)
-            ->assertJsonCount(3, 'data')
+            ->assertJsonCount(3, 'response.data')
             ->assertJsonStructure([
-                'data' => [
-                    '*' => ['id', 'name', 'slug', 'min_price', 'max_price', 'has_inventory', 'colors'],
+                'response' => [
+                    'data' => [
+                        '*' => ['id', 'name', 'slug', 'min_price', 'max_price', 'has_inventory', 'colors'],
+                    ],
+                    'meta' => ['total', 'count', 'per_page', 'current_page', 'total_pages'],
                 ],
-                'meta' => ['total', 'count', 'per_page', 'current_page', 'total_pages'],
             ]);
     }
 
@@ -110,9 +112,9 @@ class ProductIndexTest extends TestCase
         $response = $this->getJson('/api/v1/products?min_price=80000');
 
         $response->assertStatus(200)
-            ->assertJsonCount(2, 'data');
+            ->assertJsonCount(2, 'response.data');
 
-        $names = collect($response->json('data'))->pluck('name')->toArray();
+        $names = collect($response->json('response.data'))->pluck('name')->toArray();
         $this->assertContains('Sofa', $names);
         $this->assertContains('Table', $names);
         $this->assertNotContains('Chair', $names);
@@ -125,8 +127,8 @@ class ProductIndexTest extends TestCase
         $response = $this->getJson('/api/v1/products?max_price=80000');
 
         $response->assertStatus(200)
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.name', 'Chair');
+            ->assertJsonCount(1, 'response.data')
+            ->assertJsonPath('response.data.0.name', 'Chair');
     }
 
     public function test_filter_by_has_inventory_1(): void
@@ -136,9 +138,9 @@ class ProductIndexTest extends TestCase
         $response = $this->getJson('/api/v1/products?has_inventory=1');
 
         $response->assertStatus(200)
-            ->assertJsonCount(2, 'data');
+            ->assertJsonCount(2, 'response.data');
 
-        $names = collect($response->json('data'))->pluck('name')->toArray();
+        $names = collect($response->json('response.data'))->pluck('name')->toArray();
         $this->assertContains('Sofa', $names);
         $this->assertContains('Chair', $names);
         $this->assertNotContains('Table', $names);
@@ -151,8 +153,8 @@ class ProductIndexTest extends TestCase
         $response = $this->getJson('/api/v1/products?has_inventory=0');
 
         $response->assertStatus(200)
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.name', 'Table');
+            ->assertJsonCount(1, 'response.data')
+            ->assertJsonPath('response.data.0.name', 'Table');
     }
 
     public function test_filter_by_category(): void
@@ -162,7 +164,7 @@ class ProductIndexTest extends TestCase
         $response = $this->getJson('/api/v1/products?category=living-room');
 
         $response->assertStatus(200)
-            ->assertJsonCount(3, 'data');
+            ->assertJsonCount(3, 'response.data');
     }
 
     public function test_filter_by_color(): void
@@ -184,8 +186,8 @@ class ProductIndexTest extends TestCase
         $response = $this->getJson('/api/v1/products?color=' . urlencode('قرمز'));
 
         $response->assertStatus(200)
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.name', 'Sofa');
+            ->assertJsonCount(1, 'response.data')
+            ->assertJsonPath('response.data.0.name', 'Sofa');
     }
 
     public function test_multiple_filters_combined(): void
@@ -195,7 +197,7 @@ class ProductIndexTest extends TestCase
         $response = $this->getJson('/api/v1/products?min_price=80000&has_inventory=1');
 
         $response->assertStatus(200)
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.name', 'Sofa');
+            ->assertJsonCount(1, 'response.data')
+            ->assertJsonPath('response.data.0.name', 'Sofa');
     }
 }
